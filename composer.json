@@ -1,0 +1,45 @@
+{
+    "name": "skinka/flysystem-msgraph-files",
+    "description": "Flysystem adapter for OneDrive or SharePoint",
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "homepage": "https://github.com/skinka/flysystem-msgraph-files",
+    "keywords": [
+        "flysystem-msgraph",
+        "flysystem",
+        "msgraph",
+        "onedrive",
+        "sharepoint",
+        "api"
+    ],
+    "authors": [
+        {
+            "name": "Roman",
+            "email": "skink@yandex.ru",
+            "homepage": "https://cwdlab.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.0",
+        "league/flysystem": "^1.0",
+        "guzzlehttp/guzzle": "^6.2",
+        "microsoft/microsoft-graph": "^1.13"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Skinka\\FlysystemMSGraph\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Skinka\\FlysystemMSGraph\\Test\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    }
+}
