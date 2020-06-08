@@ -54,10 +54,7 @@ class MSGraphAdapter extends AbstractAdapter
             $this->graph->createRequest('GET', $url)->execute();
             return true;
         } catch (ClientException $e) {
-            if ($e->getCode() == 404) {
-                return false;
-            }
-            throw $e;
+            return false;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -222,7 +219,7 @@ class MSGraphAdapter extends AbstractAdapter
     public function copy($path, $newpath)
     {
         $content = $this->read($path);
-        return $this->write($newpath, $content, new Config());
+        return $this->write($newpath, $content['contents'], new Config());
     }
 
     public function delete($path)
