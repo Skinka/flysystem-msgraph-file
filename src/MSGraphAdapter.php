@@ -218,8 +218,24 @@ class MSGraphAdapter extends AbstractAdapter
 
     public function copy($path, $newpath)
     {
-        $content = $this->read($path);
-        return $this->write($newpath, $content['contents'], new Config());
+        $oldItem = $this->getDriveItem($path);
+        $pathInfo = pathinfo($newpath);
+        $newDir = urldecode($pathInfo['dirname']);
+        if (!$this->has($newDir)) {
+            $this->createDir($newDir, new Config());
+        }
+        $newDirItem = $this->getDriveItem($newDir);
+        $body = [
+            'parentReference' => [
+                'driveId' => $newDirItem->getParentReference()->getDriveId(),
+                'id' => $newDirItem->getId(),
+            ],
+            'name' => $pathInfo['basename']
+        ];
+        $response = $this->graph->createRequest('POST', $this->prefix.'items/'.$oldItem->getId().'/copy')
+            ->attachBody(json_encode($body))
+            ->execute();
+        return $response->getStatus() == 202;
     }
 
     public function delete($path)
@@ -270,12 +286,28 @@ class MSGraphAdapter extends AbstractAdapter
 
     public function update($path, $contents, Config $config)
     {
-        return $this->write($path, $contents, $config);
+        try {
+            $item = $this->getDriveItem($path);
+            $response = $this->graph->createRequest('PUT', $this->prefix.$item->getId().':/content')
+                ->attachBody($contents)
+                ->execute();
+            return $response->getStatus() == 200;
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     public function updateStream($path, $resource, Config $config)
     {
-        return $this->writeStream($path, $resource, $config);
+        try {
+            $item = $this->getDriveItem($path);
+            $response = $this->graph->createRequest('PUT', $this->prefix.$item->getId().':/content')
+                ->attachBody(stream_get_contents($resource))
+                ->execute();
+            return $response->getStatus() == 200;
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     public function createDir($dirname, Config $config)
